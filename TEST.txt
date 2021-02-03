@@ -23,3 +23,19 @@ _Manuelle Test_ (Eingaben und was das Programm dabei ausgeben soltle):
 
 >>> binary "11010100101001010001000000000000 & 111011100110101100101000000000"
 10000100000000000000000000000 276824064
+
+
+>>> binary "110 > 101"
+true
+
+>>> binary "110 < 101"
+false
+
+>>> binary "110 == 101"
+false
+
+>>> binary "110 != 101"
+true
+
+>>> binary "(p 110) == (p (101 | 10))"
+false
