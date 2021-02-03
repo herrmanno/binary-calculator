@@ -87,10 +87,30 @@ class Binary {
      */
     Binary& operator^=(const Binary& rhs);
 
+    /**
+     * Subtracts a binary from `this`
+     *
+     * @param rhs the subtrahend
+     * @returns the result of subtracting `rhs` from this
+     */
     Binary operator-(const Binary& rhs) const;
 
+    /**
+     * Divides `this` by another binary
+     *
+     * @param rhs the divisor
+     * @returns the quotient (w/o potential remainder) of dividing `this` by `rhs`
+     * @throws std::domain_error if `divisor` equals zero
+     */
     Binary operator/(const Binary& divisor) const;
 
+    /**
+     * Divides `this` by another binary
+     *
+     * @param rhs the divisor
+     * @returns a tuple containing the quotient and remainder of division by `divisor`
+     * @throws std::domain_error if `divisor` equals zero
+     */
     std::tuple<Binary,Binary> div(const Binary& divisor) const;
 
     /**
@@ -172,8 +192,6 @@ class Binary {
      * @returns a binary representing `this` concated w/ `other`
      */
     Binary concat(const Binary& other) const;
-    // TODO: implement
-    // Binary divide(const Binary& other) const;
 
     /**
      * Computes `this`' parity
@@ -209,21 +227,9 @@ class Binary {
     std::string to_str() const;
 
     private:
-    /** The result of a numerical comparison */
-    enum class CMP {
-        /** Operands of comparison are equal */
-        EQ,
-        /** Operand 1 of comparison is greater than operand 2 */
-        GT,
-        /** Operand 2 of comparison is greater than operand 1 */
-        LT
-    };
-
-    // TODO: use int (-1,0,1) as comparison result
-    static CMP compareBits(bool b1, bool b2);
 
     /**
-     * Combines `this` w/ another binary by performing a binary function bitwise
+     * Combines `this` w/ another binary by appliying a binary function bitwise
      *
      * Missing bits in `this` or `rhs` are treated as `false`.
      *
@@ -232,8 +238,16 @@ class Binary {
      * @returns the bit vector created by applying `combiner` on every ordered bit pair of `this` and `other`
      */
     std::vector<bool> combine(const Binary& other, std::function<bool(bool,bool)> combiner) const;
-    
-    CMP compare(const Binary& other) const;
+
+    /**
+     * Compares `this` w/ another binary by performing a bitwise comparison
+     *
+     * Missing bits in `this` or `rhs` are treated as `false`.
+     *
+     * @param other the binary to compare `this` with
+     * @returns 0 if `this` and `other` are equivalent, < 0, if `this` is less than `other`, > 0 otherwise
+     */
+    int compare(const Binary& other) const;
 
     /**
      * Replaces the value represented by `this` by a bit sequence (in serialized form)
@@ -242,7 +256,7 @@ class Binary {
      *
      * @example
      *      Binary b(1);        // equals 1
-     *      b.emplate("101");
+     *      b.emplace("101");
      *      b                   // equals 101
      */
     void emplace(const std::string& s);

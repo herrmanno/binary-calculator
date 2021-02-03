@@ -81,7 +81,7 @@ std::tuple<Binary,Binary> Binary::div(const Binary& other) const {
         
         do {
             auto cmp = Binary(rem).compare(divisor);
-            if (!(cmp == CMP::LT)) {
+            if (!(cmp < 0)) {
                 rem = (Binary(rem) - Binary(divisor)).m_bits;
                 quotient.push_back(1);
             } else {
@@ -92,26 +92,26 @@ std::tuple<Binary,Binary> Binary::div(const Binary& other) const {
             } else {
                 rem.push_back(*it); it++;
             }
-        } while (true);
+        } while (true):
 
         return { quotient, rem };
     }
 }
 
 bool Binary::operator>(const Binary& rhs) const {
-    return this->compare(rhs) == Binary::CMP::GT;
+    return this->compare(rhs) > 0;
 }
 
 bool Binary::operator<(const Binary& rhs) const {
-    return this->compare(rhs) == Binary::CMP::LT;
+    return this->compare(rhs) < 0;
 }
 
 bool Binary::operator==(const Binary& rhs) const {
-    return this->compare(rhs) == Binary::CMP::EQ;
+    return this->compare(rhs) == 0;
 }
 
 bool Binary::operator!=(const Binary& rhs) const {
-    return this->compare(rhs) != Binary::CMP::EQ;
+    return this->compare(rhs) != 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Binary& bin) {
@@ -189,7 +189,7 @@ std::vector<bool> Binary::combine(const Binary& other, std::function<bool(bool,b
     return bits1;
 }
 
-Binary::CMP Binary::compare(const Binary& other) const {
+int Binary::compare(const Binary& other) const {
     std::vector<bool> bits1 = this->m_bits;
     std::vector<bool> bits2 = other.m_bits;
 
@@ -202,16 +202,12 @@ Binary::CMP Binary::compare(const Binary& other) const {
         bits2.insert(bits2.begin(), false);
     }
 
-    CMP c = CMP::EQ;
-    for (size_t i = 0; i < l; i++) {
+    int c = 0;
+    for (size_t i = 0; i < l && !c; i++) {
         if (bits1[i] > bits2[i]) {
-            c = CMP::GT;
+            c = 1;
         } else if (bits1[i] < bits2[i]) {
-            c = CMP::LT;
-        }
-
-        if (c != CMP::EQ) {
-            break;
+            c = -1;
         }
     }
 
