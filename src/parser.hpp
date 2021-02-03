@@ -1,7 +1,6 @@
 #pragma once
+#include <memory>
 #include "./binary.hpp"
-
-#define METHOD_NOT_IMPLEMENTED assert(false && "Method not implemented")
 
 /**
  * Represents supported operators / reserved symbols (e.g. parenthesis)

@@ -1,5 +1,5 @@
 SRC = src/binary.cpp src/parser.cpp
-CCFLAGS = -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-documentation-unknown-command --std=c++14 
+CCFLAGS = -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-documentation-unknown-command -std=c++14
 
 all: binary test
 

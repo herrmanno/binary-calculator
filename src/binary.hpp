@@ -98,7 +98,7 @@ class Binary {
     /**
      * Divides `this` by another binary
      *
-     * @param rhs the divisor
+     * @param divisor the divisor
      * @returns the quotient (w/o potential remainder) of dividing `this` by `rhs`
      * @throws std::domain_error if `divisor` equals zero
      */
@@ -107,7 +107,7 @@ class Binary {
     /**
      * Divides `this` by another binary
      *
-     * @param rhs the divisor
+     * @param divisor the divisor
      * @returns a tuple containing the quotient and remainder of division by `divisor`
      * @throws std::domain_error if `divisor` equals zero
      */

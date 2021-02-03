@@ -1,3 +1,4 @@
+#include <cassert>
 #include <vector>
 #include <deque>
 #include <sstream>
@@ -6,6 +7,9 @@
 #include <tuple>
 #include "./binary.hpp"
 #include "./parser.hpp"
+
+#define METHOD_NOT_IMPLEMENTED assert(false && "Method not implemented")
+
 
 /*--------------------*
  *         Op         *
