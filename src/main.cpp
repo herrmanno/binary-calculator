@@ -11,6 +11,15 @@ USAGE
         binary <help|--help|-h>     shows this help
         binary -                    evaluates and prints expression read from stdin linewise
 
+OUTPUT
+        If the expression evaluates to a binary term the output consists of the binary
+        representation followed by the base-10 representation of the term's value, seperated by a
+        single space character.
+        If the expresseion evaluates to a numerical term the output consists of the base-10
+        representation of said value, only.
+        If the expresseion evaluates to a boolean value the output consists of the word 'true' or
+        'false', only.
+
 EXAMPLE
         >>> binary "101 | 010"
         111 7

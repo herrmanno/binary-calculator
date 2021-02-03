@@ -1,0 +1,7 @@
+Hauptprogramm kompilieren:
+    `make binary` oder
+    `clang++ -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-documentation-unknown-command --std=c++14  -o binary src/main.cpp src/binary.cpp src/parser.cpp`
+
+Tests kompilieren:
+    `make test` oder
+    `clang++ -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-documentation-unknown-command --std=c++14  -o testBinary test/main.cpp src/binary.cpp src/parser.cpp`

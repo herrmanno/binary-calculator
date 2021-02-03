@@ -1,0 +1,25 @@
+Hauptprogramm testen:
+    `make runtest`
+
+_Manuelle Test_ (Eingaben und was das Programm dabei ausgeben soltle):
+
+>>> binary "101"
+101 5
+
+>>> binary "111 & 101"
+101 5
+
+>>> binary "10 | 101"
+111 7
+
+>>> binary "110 ^ 101"
+11 3
+
+>>> binary "110 . 101"
+110101 53
+
+>>> binary "p (110 . 101)"
+4
+
+>>> binary "11010100101001010001000000000000 & 111011100110101100101000000000"
+10000100000000000000000000000 276824064
