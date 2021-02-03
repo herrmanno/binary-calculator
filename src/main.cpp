@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
         std::ostringstream oss;
         std::copy(args.begin(), args.end(), std::ostream_iterator<std::string>(oss,""));
         std::string arg = oss.str();
-        
+
         auto t = evaluate(arg);
         if (t->type == Token::Type::Bin) {
             std::cout << t->bin() << " " << t->bin().to_l() << std::endl;

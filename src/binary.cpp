@@ -126,7 +126,7 @@ void Binary::emplace(const std::string& s) {
 std::vector<bool> Binary::accumulate(const Binary& other, std::function<bool(bool,bool)> accumulator) const {
     std::vector<bool> bits1 = this->m_bits;
     std::vector<bool> bits2 = other.m_bits;
-    
+
     size_t l = std::max(bits1.size(), bits2.size());
 
     while (bits1.size() < l) {
@@ -135,7 +135,7 @@ std::vector<bool> Binary::accumulate(const Binary& other, std::function<bool(boo
     while (bits2.size() < l) {
         bits2.insert(bits2.begin(), false);
     }
-    
+
     for (int i = 0; i < l; i++) {
         bits1[i] = accumulator(bits1[i], bits2[i]);
     }
@@ -146,16 +146,16 @@ std::vector<bool> Binary::accumulate(const Binary& other, std::function<bool(boo
 Binary::CMP Binary::compare(const Binary& other) const {
     std::vector<bool> bits1 = this->m_bits;
     std::vector<bool> bits2 = other.m_bits;
-    
+
     size_t l = std::max(bits1.size(), bits2.size());
-    
+
     while (bits1.size() < l) {
         bits1.insert(bits1.begin(), false);
     }
     while (bits2.size() < l) {
         bits2.insert(bits2.begin(), false);
     }
-    
+
     CMP c = CMP::EQ;
     for (int i = 0; i < l; i++) {
         if (bits1[i] > bits2[i]) {
@@ -163,7 +163,7 @@ Binary::CMP Binary::compare(const Binary& other) const {
         } else if (bits1[i] < bits2[i]) {
             c = CMP::LT;
         }
-        
+
         if (c != CMP::EQ) {
             break;
         }
