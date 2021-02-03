@@ -1,5 +1,7 @@
 # Binary calculator
 
+![title_gif](render1612360734415.gif)
+
 This is the submission for my final project of the course [C963 'Grundlagen der Programmierung'][1].
 
 The project's description reads as following:
