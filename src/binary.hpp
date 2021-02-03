@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <tuple>
 #include <istream>
 #include <ostream>
 #include <functional>
@@ -85,6 +86,12 @@ class Binary {
      * @param rhs the binary to combine with `this`
      */
     Binary& operator^=(const Binary& rhs);
+
+    Binary operator-(const Binary& rhs) const;
+
+    Binary operator/(const Binary& divisor) const;
+
+    std::tuple<Binary,Binary> div(const Binary& divisor) const;
 
     /**
      * Compares `this` to binary in regards of the '>' relation

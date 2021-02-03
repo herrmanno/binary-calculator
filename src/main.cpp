@@ -15,6 +15,12 @@ OUTPUT
         If the expression evaluates to a binary term the output consists of the binary
         representation followed by the base-10 representation of the term's value, seperated by a
         single space character.
+        If the expression evaluates to a binary division the output consists of the binary space
+        seperated binary representations of the quotient and remainder, where the remainder is
+        preceeded by an 'R' character, followed by the base-10 representation of quotient and
+        remainder where the remainer is preceeded by an 'R' character, again.
+        followed by the base-10 representation of the term's value, seperated by a
+        single space character.
         If the expresseion evaluates to a numerical term the output consists of the base-10
         representation of said value, only.
         If the expresseion evaluates to a boolean value the output consists of the word 'true' or
@@ -23,6 +29,9 @@ OUTPUT
 EXAMPLE
         >>> binary "101 | 010"
         111 7
+
+        >>> binary "101 / 010"
+        10 R1 2 R1
 
         >>> binary "101 . 010"
         10110 22
@@ -39,6 +48,7 @@ EXPRESSION
          - &    bitwise logic and
          - |    bitwise logic or
          - ^    bitwise logic xor
+         - /    divition
          - .    concatenation
          - p    parity
          - ==   compariton of equality
@@ -48,6 +58,8 @@ EXPRESSION
 
         Note that the last four operators work on two binary operands of same type, whereas the
         first five operators are only defined on binary operands.
+        Also note that a division's remainder is not part of further computations, if the divion
+        result is fed to another operation.
     )EOF";
 
     std::cout << help << std::endl;
@@ -56,14 +68,10 @@ EXPRESSION
 static void eval(std::string& s) {
     try {
         auto t = evaluate(s);
-        if (t->type == Token::Type::Bin) {
-            std::cout << t->bin() << " " << t->bin().to_l() << std::endl;
-        } else if (t->type == Token::Type::Bool) {
-            std::cout << (t->boolean() ? "true" : "false") << std::endl;
-        } else if (t->type == Token::Type::Num) {
-            std::cout << t->num() << std::endl;
-        }
+        std::cout << *t << std::endl;
     } catch (std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+    } catch (std::domain_error& e) {
         std::cerr << e.what() << std::endl;
     } catch (...) {
         std::cerr << "An unexpected error occured" << std::endl;

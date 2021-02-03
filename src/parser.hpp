@@ -16,6 +16,7 @@ enum class Op {
     Or,
     Xor,
     Concat,
+    Div,
 
     Parity,
 
@@ -87,6 +88,11 @@ struct Token {
     virtual Binary bin() const;
 
     /**
+     * @returns this token's second value (if present) as `Binary` instance
+     */
+    virtual Binary bin2() const;
+
+    /**
      * @returns this token's value as number
      *
      * Is only guaranteed not to throw if `type` is `Type::Num`.
@@ -101,9 +107,17 @@ struct Token {
     virtual bool boolean() const;
 
     /**
+     * The token't string representation
+     * @returns the string representation of this token
+     */
+    virtual std::string to_str() const;
+
+    /**
      * @returns this token's type as human readable string
      */
     std::string typeName() const;
+    
+    friend std::ostream& operator<<(std::ostream& os, Token& t);
 
 };
 
@@ -135,8 +149,32 @@ struct BinToken final : public Token {
 
     Binary bin() const override;
 
+    virtual std::string to_str() const override;
+
     private:
     Binary m_bin;
+};
+
+/**
+ * A token that holds a two values which are representable as `Binary`
+ */
+struct Bin2Token final : public Token {
+    /**
+     * Creates a Token of type `Token::Type::Bin`
+     * @param b1 the first value this token holds
+     * @param b2 the second value this token holds
+     */
+    Bin2Token(Binary b1, Binary b2);
+
+    Binary bin() const override;
+
+    Binary bin2() const override;
+
+    virtual std::string to_str() const override;
+
+    private:
+    Binary m_bin1;
+    Binary m_bin2;
 };
 
 /**
@@ -150,6 +188,8 @@ struct NumToken final : public Token {
     NumToken(long l);
 
     long num() const override;
+
+    virtual std::string to_str() const override;
 
     private:
     long m_n;
@@ -166,6 +206,8 @@ struct BoolToken final : public Token {
     BoolToken(bool b);
 
     bool boolean() const override;
+
+    virtual std::string to_str() const override;
 
     private:
     bool m_b;

@@ -40,6 +40,18 @@ int main() {
     assert((Binary(5) ^ Binary(0)) == Binary(5));
     assert((Binary(4) ^ Binary(1)) == Binary(5));
 
+    assert((Binary(1) / Binary(1)) == Binary(1));
+    assert((Binary(5) / Binary(7)) == Binary(0));
+    assert((Binary(5) / Binary(1)) == Binary(5));
+    assert((Binary(4) / Binary(2)) == Binary(2));
+    assert((Binary(5) / Binary(2)) == Binary(2));
+
+    assert(Binary(1).div(Binary(1)) == std::make_tuple(Binary(1), Binary(0)));
+    assert(Binary(5).div(Binary(7)) == std::make_tuple(Binary(0), Binary(7)));
+    assert(Binary(5).div(Binary(1)) == std::make_tuple(Binary(5), Binary(0)));
+    assert(Binary(4).div(Binary(2)) == std::make_tuple(Binary(2), Binary(0)));
+    assert(Binary(5).div(Binary(2)) == std::make_tuple(Binary(2), Binary(1)));
+
     assert(Binary(0).concat(Binary(0)) == Binary(0));
     assert(Binary(1).concat(Binary(0)) == Binary(2));
     assert(Binary(5).concat(Binary(5)) == Binary(45));

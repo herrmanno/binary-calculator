@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <ostream>
+#include <tuple>
 #include <algorithm>
 #include "./functions.hpp"
 #include "./binary.hpp"
@@ -54,6 +55,47 @@ Binary Binary::operator^(const Binary& rhs) const {
 Binary& Binary::operator^=(const Binary& rhs) {
     this->m_bits = this->combine(rhs, std::not_equal_to<bool>());
     return *this;
+}
+
+Binary Binary::operator-(const Binary& rhs) const {
+    return { this->to_l() - rhs.to_l() }; // FIXME: implement without using to_l()
+}
+
+Binary Binary::operator/(const Binary& divisor) const {
+    return std::get<0>(div(divisor));
+}
+
+std::tuple<Binary,Binary> Binary::div(const Binary& other) const {
+    if (other == Binary(0)) {
+        throw std::domain_error("Division by 0");
+    } else if (other == *this) {
+        return { { 1 }, { 0 } };
+    } else if (other > *this) {
+        return { { 0 }, other };
+    } else {
+        std::vector<bool> dividend = this->m_bits;
+        std::vector<bool> divisor = other.m_bits;
+        std::vector<bool> quotient { };
+        std::vector<bool> rem { dividend.begin(), dividend.begin() + static_cast<long>(divisor.size()) };
+        auto it = dividend.begin() + static_cast<long>(divisor.size());
+        
+        do {
+            auto cmp = Binary(rem).compare(divisor);
+            if (!(cmp == CMP::LT)) {
+                rem = (Binary(rem) - Binary(divisor)).m_bits;
+                quotient.push_back(1);
+            } else {
+                quotient.push_back(0);
+            }
+            if (it == dividend.end()) {
+                break;
+            } else {
+                rem.push_back(*it); it++;
+            }
+        } while (true);
+
+        return { quotient, rem };
+    }
 }
 
 bool Binary::operator>(const Binary& rhs) const {

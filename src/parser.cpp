@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include <stdexcept>
+#include <tuple>
 #include "./binary.hpp"
 #include "./parser.hpp"
 
@@ -19,6 +20,7 @@ unsigned int precedence(Op op) {
         case Op::Or:
         case Op::Xor:
         case Op::Concat:
+        case Op::Div:
             return 3;
 
         case Op::EQ:
@@ -43,9 +45,13 @@ Op Token::op() const { METHOD_NOT_IMPLEMENTED; return {}; }
 
 Binary Token::bin() const { METHOD_NOT_IMPLEMENTED; return {}; }
 
+Binary Token::bin2() const { METHOD_NOT_IMPLEMENTED; return {}; }
+
 long Token::num() const { METHOD_NOT_IMPLEMENTED; return {}; }
 
 bool Token::boolean() const { METHOD_NOT_IMPLEMENTED; return {}; }
+
+std::string Token::to_str() const { METHOD_NOT_IMPLEMENTED; return {}; }
 
 std::string Token::typeName() const {
         switch (type) {
@@ -59,6 +65,11 @@ std::string Token::typeName() const {
                 return "Bool";
         }
     };
+
+std::ostream& operator<<(std::ostream& os, Token& t) {
+    os << t.to_str();
+    return os;
+}
 
 /* OpToken */
 
@@ -76,6 +87,33 @@ Binary BinToken::bin() const {
     return m_bin;
 }
 
+std::string BinToken::to_str() const {
+    std::stringstream ss;
+    ss << bin() << " " << bin().to_l();
+    return ss.str();
+}
+
+/* Bin2Token */
+
+Bin2Token::Bin2Token(Binary b1, Binary b2) : Token(Type::Bin)
+    , m_bin1 { b1 }
+    , m_bin2 { b2 }
+    {}
+
+Binary Bin2Token::bin() const {
+    return m_bin1;
+}
+
+Binary Bin2Token::bin2() const {
+    return m_bin2;
+}
+
+std::string Bin2Token::to_str() const {
+    std::stringstream ss;
+    ss << bin() << " R" << bin2() << " " << bin().to_l() << " R" << bin2().to_l();
+    return ss.str();
+}
+
 /* NumToken */
 
 NumToken::NumToken(long l) : Token(Type::Num), m_n { l } {}
@@ -84,12 +122,22 @@ long NumToken::num() const {
     return m_n;
 }
 
+std::string NumToken::to_str() const {
+    std::stringstream ss;
+    ss << num();
+    return ss.str();
+}
+
 /* BoolToken */
 
 BoolToken::BoolToken(bool b) : Token(Type::Bool), m_b { b } {}
 
 bool BoolToken::boolean() const {
     return m_b;
+}
+
+std::string BoolToken::to_str() const {
+    return boolean() ? "true" : "false";
 }
 
 /*--------------------*
@@ -199,6 +247,17 @@ std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr) {
                 throw std::invalid_argument("Cannot perform '^' on operands of type " + operand2->typeName() + " and " + operand1->typeName());
             }
             s.push_back(std::make_shared<BinToken>(BinToken(operand1->bin() ^ operand2->bin())));
+        } else if (t->op() == Op::Div) {
+            if (s.size() < 2) {
+                throw std::invalid_argument("Operation '/' is applied to too few arguments");
+            }
+            auto operand2 = s.back(); s.pop_back();
+            auto operand1 = s.back(); s.pop_back();
+            if (operand1->type != Token::Type::Bin || operand2->type != Token::Type::Bin) {
+                throw std::invalid_argument("Cannot perform '/' on operands of type " + operand2->typeName() + " and " + operand1->typeName());
+            }
+            auto result = operand1->bin().div(operand2->bin());
+            s.push_back(std::make_shared<Bin2Token>(Bin2Token(std::get<0>(result), std::get<1>(result))));
         } else if (t->op() == Op::Concat) {
             if (s.size() < 2) {
                 throw std::invalid_argument("Operation '&' is applied to too few arguments");
@@ -329,6 +388,10 @@ std::vector<std::shared_ptr<Token> > tokenize(const std::string& s) {
         } else if (input.front() == '^') {
             push_binary_token();
             push_operator_token(Op::Xor);
+            input.pop_front();
+        } else if (input.front() == '/') {
+            push_binary_token();
+            push_operator_token(Op::Div);
             input.pop_front();
         } else if (input.front() == '.') {
             push_binary_token();
