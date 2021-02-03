@@ -92,7 +92,7 @@ std::tuple<Binary,Binary> Binary::div(const Binary& other) const {
             } else {
                 rem.push_back(*it); it++;
             }
-        } while (true):
+        } while (true);
 
         return { quotient, rem };
     }
