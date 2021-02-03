@@ -1,0 +1,4 @@
+*.dSYM
+*pdf
+.vscode
+binary
