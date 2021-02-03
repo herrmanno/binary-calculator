@@ -9,9 +9,13 @@ Binary::Binary() : m_bits {} {}
 
 Binary::Binary(unsigned long long int l) : m_bits { }
 {
-    while (l) {
-        m_bits.insert(m_bits.begin(), l & 1);
-        l = l >> 1;
+    if (l == 0) {
+        m_bits.push_back(false);
+    } else {
+        while (l) {
+            m_bits.insert(m_bits.begin(), l & 1);
+            l = l >> 1;
+        }
     }
 }
 
@@ -23,32 +27,32 @@ Binary::Binary(const std::vector<bool>& bits) : m_bits { bits }
 }
 
 Binary Binary::operator&(const Binary& rhs) const {
-    std::vector<bool> bits = this->accumulate(rhs, std::logical_and<bool>());
+    std::vector<bool> bits = this->combine(rhs, std::logical_and<bool>());
     return { bits };
 }
 
 Binary& Binary::operator&=(const Binary& rhs) {
-    this->m_bits = this->accumulate(rhs, std::logical_and<bool>());
+    this->m_bits = this->combine(rhs, std::logical_and<bool>());
     return *this;
 }
 
 Binary Binary::operator|(const Binary& rhs) const {
-    std::vector<bool> bits = this->accumulate(rhs, std::logical_or<bool>());
+    std::vector<bool> bits = this->combine(rhs, std::logical_or<bool>());
     return { bits };
 }
 
 Binary& Binary::operator|=(const Binary& rhs) {
-    this->m_bits = this->accumulate(rhs, std::logical_or<bool>());
+    this->m_bits = this->combine(rhs, std::logical_or<bool>());
     return *this;
 }
 
 Binary Binary::operator^(const Binary& rhs) const {
-    std::vector<bool> bits = this->accumulate(rhs, std::not_equal_to<bool>());
+    std::vector<bool> bits = this->combine(rhs, std::not_equal_to<bool>());
     return { bits };
 }
 
 Binary& Binary::operator^=(const Binary& rhs) {
-    this->m_bits = this->accumulate(rhs, std::not_equal_to<bool>());
+    this->m_bits = this->combine(rhs, std::not_equal_to<bool>());
     return *this;
 }
 
@@ -86,7 +90,7 @@ Binary Binary::concat(const Binary& other) const {
     return { bits };
 }
 
-size_t Binary::parity() const {
+long Binary::parity() const {
     return std::count_if(m_bits.begin(), m_bits.end(), identity<bool>);
 }
 
@@ -123,7 +127,7 @@ void Binary::emplace(const std::string& s) {
     m_bits = bits;
 }
 
-std::vector<bool> Binary::accumulate(const Binary& other, std::function<bool(bool,bool)> accumulator) const {
+std::vector<bool> Binary::combine(const Binary& other, std::function<bool(bool,bool)> combiner) const {
     std::vector<bool> bits1 = this->m_bits;
     std::vector<bool> bits2 = other.m_bits;
 
@@ -136,8 +140,8 @@ std::vector<bool> Binary::accumulate(const Binary& other, std::function<bool(boo
         bits2.insert(bits2.begin(), false);
     }
 
-    for (int i = 0; i < l; i++) {
-        bits1[i] = accumulator(bits1[i], bits2[i]);
+    for (size_t i = 0; i < l; i++) {
+        bits1[i] = combiner(bits1[i], bits2[i]);
     }
 
     return bits1;
@@ -157,7 +161,7 @@ Binary::CMP Binary::compare(const Binary& other) const {
     }
 
     CMP c = CMP::EQ;
-    for (int i = 0; i < l; i++) {
+    for (size_t i = 0; i < l; i++) {
         if (bits1[i] > bits2[i]) {
             c = CMP::GT;
         } else if (bits1[i] < bits2[i]) {

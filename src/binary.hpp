@@ -25,7 +25,7 @@ class Binary {
      *
      * where `true` equals 1 and `false` equals 0
      *
-     * @param the bits that shall be represented as binary
+     * @param bits the bits that shall be represented as binary
      */
     Binary(const std::vector<bool>& bits);
 
@@ -151,7 +151,7 @@ class Binary {
      * @param bin the binary deserialize from `is`
      * @returns a reference to the instream pulled from
      */
-    friend std::istream& operator>>(std::istream& os, Binary& bin);
+    friend std::istream& operator>>(std::istream& is, Binary& bin);
 
     /**
      * Concats a binary to `this`
@@ -179,7 +179,7 @@ class Binary {
      *
      * @returns the number of _1s_ of `this`
      */
-    size_t parity() const;
+    long parity() const;
 
     /**
      * Converts `this`' value to number base 10
@@ -215,7 +215,17 @@ class Binary {
     // TODO: use int (-1,0,1) as comparison result
     static CMP compareBits(bool b1, bool b2);
 
-    std::vector<bool> accumulate(const Binary& other, std::function<bool(bool,bool)> accumulator) const;
+    /**
+     * Combines `this` w/ another binary by performing a binary function bitwise
+     *
+     * Missing bits in `this` or `rhs` are treated as `false`.
+     *
+     * @param other the binary to combine `this` with
+     * @param combiner the binary function used to combine two bits
+     * @returns the bit vector created by applying `combiner` on every ordered bit pair of `this` and `other`
+     */
+    std::vector<bool> combine(const Binary& other, std::function<bool(bool,bool)> combiner) const;
+    
     CMP compare(const Binary& other) const;
 
     /**

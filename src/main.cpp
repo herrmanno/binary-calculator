@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
             std::cout << t->bin() << " " << t->bin().to_l() << std::endl;
         } else if (t->type == Token::Type::Bool) {
             std::cout << (t->boolean() ? "true" : "false") << std::endl;
-        } else if (t->type == Token::Type::Int) {
+        } else if (t->type == Token::Type::Num) {
             std::cout << t->num() << std::endl;
         }
     }

@@ -27,7 +27,8 @@ unsigned int precedence(Op op) {
         case Op::LT:
             return 2;
 
-        default:
+        case Op::LPar:
+        case Op::RPar:
             return 0;
     }
 }
@@ -38,13 +39,21 @@ unsigned int precedence(Op op) {
 
 Token::Token(Token::Type t) : type { t } {}
 
+Op Token::op() const { METHOD_NOT_IMPLEMENTED; return {}; }
+
+Binary Token::bin() const { METHOD_NOT_IMPLEMENTED; return {}; }
+
+long Token::num() const { METHOD_NOT_IMPLEMENTED; return {}; }
+
+bool Token::boolean() const { METHOD_NOT_IMPLEMENTED; return {}; }
+
 std::string Token::typeName() const {
         switch (type) {
             case Type::Op:
                 return "Operator";
             case Type::Bin:
                 return "Binary";
-            case Type::Int:
+            case Type::Num:
                 return "Number";
             case Type::Bool:
                 return "Bool";
@@ -67,11 +76,11 @@ Binary BinToken::bin() const {
     return m_bin;
 }
 
-/* IntToken */
+/* NumToken */
 
-IntToken::IntToken(int i) : Token(Type::Int), m_n { i } {}
+NumToken::NumToken(long l) : Token(Type::Num), m_n { l } {}
 
-int IntToken::num() const {
+long NumToken::num() const {
     return m_n;
 }
 
@@ -86,6 +95,21 @@ bool BoolToken::boolean() const {
 /*--------------------*
  *       Parser       *
  *--------------------*/
+
+/**
+ * Evaluates a vector of tokens that are formed in
+ * <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">RPN</a>
+ * @param expr the expression to evaluate
+ */
+static std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr);
+
+/**
+ * Parses an expression to a vector of tokens
+ *
+ * @param expr the expression to parse
+ * @throws if the expression is misformed in terms of syntax
+ */
+static std::vector<std::shared_ptr<Token> > tokenize(const std::string& expr);
 
 std::shared_ptr<Token> evaluate(const std::string& s) {
     std::vector<std::shared_ptr<Token> > input = tokenize(s);
@@ -193,7 +217,7 @@ std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr) {
             auto operand1 = s.back(); s.pop_back();
             if (operand1->type == Token::Type::Bin && operand2->type == Token::Type::Bin) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->bin() == operand2->bin())));
-            } else if (operand1->type == Token::Type::Int && operand2->type == Token::Type::Int) {
+            } else if (operand1->type == Token::Type::Num && operand2->type == Token::Type::Num) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->num() == operand2->num())));
             } else if (operand1->type == Token::Type::Bool && operand2->type == Token::Type::Bool) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->boolean() == operand2->boolean())));
@@ -208,7 +232,7 @@ std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr) {
             auto operand1 = s.back(); s.pop_back();
             if (operand1->type == Token::Type::Bin && operand2->type == Token::Type::Bin) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->bin() != operand2->bin())));
-            } else if (operand1->type == Token::Type::Int && operand2->type == Token::Type::Int) {
+            } else if (operand1->type == Token::Type::Num && operand2->type == Token::Type::Num) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->num() != operand2->num())));
             } else if (operand1->type == Token::Type::Bool && operand2->type == Token::Type::Bool) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->boolean() != operand2->boolean())));
@@ -223,7 +247,7 @@ std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr) {
             auto operand1 = s.back(); s.pop_back();
             if (operand1->type == Token::Type::Bin && operand2->type == Token::Type::Bin) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->bin() > operand2->bin())));
-            } else if (operand1->type == Token::Type::Int && operand2->type == Token::Type::Int) {
+            } else if (operand1->type == Token::Type::Num && operand2->type == Token::Type::Num) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->num() > operand2->num())));
             } else {
                 throw std::invalid_argument("Cannot perform '>' on operands of type " + operand1->typeName() + " and " + operand2->typeName());
@@ -236,7 +260,7 @@ std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr) {
             auto operand1 = s.back(); s.pop_back();
             if (operand1->type == Token::Type::Bin && operand2->type == Token::Type::Bin) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->bin() < operand2->bin())));
-            } else if (operand1->type == Token::Type::Int && operand2->type == Token::Type::Int) {
+            } else if (operand1->type == Token::Type::Num && operand2->type == Token::Type::Num) {
                 s.push_back(std::make_shared<BoolToken>(BoolToken(operand1->num() < operand2->num())));
             } else {
                 throw std::invalid_argument("Cannot perform '<' on operands of type " + operand1->typeName() + " and " + operand2->typeName());
@@ -247,7 +271,7 @@ std::shared_ptr<Token> evaluate(std::vector<std::shared_ptr<Token> >& expr) {
             }
             auto operand = s.back(); s.pop_back();
             if (operand->type == Token::Type::Bin) {
-                s.push_back(std::make_shared<IntToken>(IntToken(operand->bin().parity())));
+                s.push_back(std::make_shared<NumToken>(NumToken(operand->bin().parity())));
             } else {
                 throw std::invalid_argument("Cannot perform 'p(arity)' on operand of type " + operand->typeName());
             }
