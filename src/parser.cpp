@@ -314,6 +314,7 @@ std::vector<std::shared_ptr<Token> > tokenize(const std::string& s) {
         while (isspace(input.front())) {
             input.pop_front();
         }
+        
         if (input.front() == '1' || input.front() == '0') {
             curr.push_back(input.front());
             input.pop_front();
@@ -377,6 +378,10 @@ std::vector<std::shared_ptr<Token> > tokenize(const std::string& s) {
             input.pop_front();
         } else {
             throw std::invalid_argument("Invalid input character '" + std::string(1, input.front()) + "'");
+        }
+
+        while (isspace(input.front())) {
+            input.pop_front();
         }
     }
 
