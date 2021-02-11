@@ -5,6 +5,9 @@
 #include "./binary.hpp"
 #include "./parser.hpp"
 
+/**
+ * Prints a help description for the main routine to stdout
+ */
 static void print_help() {
     const char * help = R"EOF(
 USAGE
@@ -66,6 +69,9 @@ EXPRESSION
     std::cout << help << std::endl;
 }
 
+/**
+ * Evaluates a given expression and print its result to stdout
+ */
 static void eval(std::string& s) {
     try {
         auto t = evaluate(s);
@@ -79,6 +85,9 @@ static void eval(std::string& s) {
     }
 }
 
+/**
+ * Parses given arguments and evaluates expression from arguments or stdin
+ */
 int main(int argc, char** argv) {
     if (argc > 1) {
         std::vector<std::string> args;

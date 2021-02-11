@@ -6,20 +6,32 @@
  * Represents supported operators / reserved symbols (e.g. parenthesis)
  */
 enum class Op {
+    /** Greater than '>' operator */
     GT,
+    /** Less than '<' operator */
     LT,
+    /** Equals '==' operator */
     EQ,
+    /** Not equals '!=' operator */
     NEQ,
 
+    /** And '&' operator */
     And,
+    /** Or '|' operator */
     Or,
+    /** Xor '^' operator */
     Xor,
+    /** Concat '.' operator */
     Concat,
+    /** Div '/' operator */
     Div,
 
+    /** Parity 'p' operator */
     Parity,
 
+    /** Left parenthesis '(' */
     LPar,
+    /** Right parenthesis ')' */
     RPar,
 };
 
